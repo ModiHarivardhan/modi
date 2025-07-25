@@ -3,7 +3,12 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 
-// Needed to parse JSON bodies
+// Serve frontend static files from 'dist' folder
+app.use(express.static('dist'))
+
+app.use(express.json())
+app.use(morgan('tiny'))
+app.use(cors())
 
 let persons = [
   { id: 1, name: 'Arto Hellas', number: '040-123456' },
@@ -13,16 +18,12 @@ let persons = [
   { id: 5, name: 'Modi', number: '123-33-444' }
 ]
 
-app.use(express.json())
-app.use(morgan('tiny'))
-app.use(cors())
-app.use(express.static('dist'))
-
-// GET all
+// GET all persons
 app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
-// GET a specific person by id
+
+// GET person by id
 app.get('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
   const person = persons.find(p => p.id === id)
@@ -34,42 +35,41 @@ app.get('/api/persons/:id', (req, res) => {
   }
 })
 
+// POST a new person
 app.post('/api/persons', (req, res) => {
-  const body = req.body;
+  const body = req.body
 
-  // Check if name or number is missing
   if (!body.name || !body.number) {
-    return res.status(400).json({ error: 'Name or number missing' });
+    return res.status(400).json({ error: 'Name or number missing' })
   }
 
-  // Check if name already exists
-  const nameExists = persons.find(p => p.name === body.name);
+  const nameExists = persons.find(p => p.name === body.name)
   if (nameExists) {
-    return res.status(400).json({ error: 'Name must be unique' });
+    return res.status(400).json({ error: 'Name must be unique' })
   }
 
   const newId = persons.length > 0
     ? Math.max(...persons.map(p => p.id)) + 1
-    : 1;
+    : 1
 
   const person = {
     id: newId,
     name: body.name,
     number: body.number,
-  };
+  }
 
-  persons = persons.concat(person);
-  res.json(person);
-});
+  persons = persons.concat(person)
+  res.json(person)
+})
 
-
-// ✅ DELETE person by id
+// DELETE person by id
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
   persons = persons.filter(person => person.id !== id)
   res.status(204).end()
 })
 
+// Define PORT for Render (default to 3001)
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
