@@ -12,15 +12,8 @@ let persons = [
   { id: 4, name: 'Mary Poppendieck', number: '39-23-6423122' },
   { id: 5, name: 'Modi', number: '123-33-444' }
 ]
-const requestLogger = (request, response, next) => {
-  console.log('Method:', request.method)
-  console.log('Path:  ', request.path)
-  console.log('Body:  ', request.body)
-  console.log('---')
-  next()
-}
+
 app.use(express.json())
-app.use(requestLogger)
 app.use(morgan('tiny'))
 app.use(cors())
 app.use(express.static('dist'))
@@ -77,11 +70,6 @@ app.delete('/api/persons/:id', (req, res) => {
   res.status(204).end()
 })
 
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
-
-app.use(unknownEndpoint)
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
