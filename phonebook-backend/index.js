@@ -35,32 +35,28 @@ app.get('/api/persons/:id', (req, res) => {
   }
 })
 
-// POST a new person
-app.post('/api/persons', (req, res) => {
-  const body = req.body
+app.post('/api/persons', (request, response) => {
+  const body = request.body
 
   if (!body.name || !body.number) {
-    return res.status(400).json({ error: 'Name or number missing' })
+    return response.status(400).json({ error: 'name or number is missing' })
   }
 
-  const nameExists = persons.find(p => p.name === body.name)
+  const nameExists = persons.some(person => person.name === body.name)
   if (nameExists) {
-    return res.status(400).json({ error: 'Name must be unique' })
+    return response.status(400).json({ error: 'name must be unique' })
   }
-
-  const newId = persons.length > 0
-    ? Math.max(...persons.map(p => p.id)) + 1
-    : 1
 
   const person = {
-    id: newId,
     name: body.name,
     number: body.number,
+    id: generateId(),
   }
 
   persons = persons.concat(person)
-  res.json(person)
+  response.json(person)
 })
+
 
 // DELETE person by id
 app.delete('/api/persons/:id', (req, res) => {
