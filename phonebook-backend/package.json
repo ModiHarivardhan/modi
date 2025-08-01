@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-  "start": "node index.js",
-  "build": "echo \"No build needed\"",
-  "build:ui": "npx shx rm -rf dist && cd ../phonebook && npm run build && npx shx cp -r dist ../phonebook-backend",
-  "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
-  "lint": "eslint ."
-},
+    "start": "node index.js",
+    "build": "echo \"No build needed\"",
+    "build:ui": "npx shx rm -rf dist && cd ../phonebook && npm install && npm run build && npx shx cp -r dist ../phonebook-backend",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
+    "lint": "eslint .",
+    "postinstall": "npm run build:ui"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
@@ -24,6 +25,9 @@
     "globals": "^16.3.0",
     "nodemon": "^3.1.10",
     "shx": "^0.4.0"
+  },
+  "engines": {
+    "node": ">=18.x"
   },
   "keywords": [],
   "author": "",
